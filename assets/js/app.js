@@ -768,7 +768,7 @@ $("form").on("submit", function (event) {
         return;
     }
 
-    // 회원가입 요청 데이터
+    
     let newUser = {
         nickname: nickname,
         username: userId,
