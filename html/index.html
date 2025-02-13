@@ -223,10 +223,14 @@
                                                       </a>
                                                   </div>
                                                   <div class="profile-detail mt-3">
-                                                  <h5><a href="../app/user-profile-edit.html">Panny Marco</a></h5>
-                                                  <p>pannymarco@gmail.com</p>
+                                                  <h5><a href="../app/user-profile-edit.html"><script>
+                                                    document.write(localStorage.getItem('nickname') || '게스트');
+                                                </script></a></h5>
+                                                  <p><script>
+                                                    document.write(localStorage.getItem('username') || '게스트');
+                                                </script></p>
                                                   </div>
-                                                  <a href="auth-sign-in.html" class="btn btn-primary">Sign Out</a>
+                                                  <a href="auth-sign-in.html" class="btn btn-primary" id="signOutBtn">Sign Out</a>
                                               </div>
                                               <div class="profile-details mt-4 pt-4 border-top">
                                                   <div class="media align-items-center mb-3">
