@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic File List</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Remixicon (for icons - optional, if you need icons like ri-file-copy-line) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+
+    <style>
+    /* Optional custom styles (for the image overlay) */
+    .iq-image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .iq-thumb:hover .iq-image-overlay {
+        opacity: 1;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row" id="fileListContainer">
+        <!-- File list will be dynamically generated here -->
+    </div>
+</div>
+
+<!-- Bootstrap JS, jQuery, Popper.js (required for Bootstrap's JavaScript plugins) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+// Sample file data (REPLACE THIS WITH YOUR ACTUAL FILE DATA)
+const files = [
+    { title: "New-one.docx", url: "../assets/vendor/doc-viewer/files/demo.docx" },
+    { title: "Woo-box.xlsx", url: "../assets/vendor/doc-viewer/files/demo.xlsx" },
+    { title: "IOS-content.pptx", url: "../assets/vendor/doc-viewer/files/demo.pptx" },
+    { title: "Terms.pdf", url: "../assets/vendor/doc-viewer/files/demo.pdf" },
+    { title: "readme.txt", url: "" } // No preview URL for txt
+];
+
+// Function to handle file download
+function downloadFile(filename) {
+    const file = files.find(f => f.title === filename);
+    if (file && file.url) {
+        const link = document.createElement('a');
+        link.href = file.url;
+        link.download = file.title;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        alert('This file cannot be downloaded because it does not have a preview URL.');
+    }
+}
+
+// Function to handle file deletion
+function deleteFile(filename) {
+    if (confirm(`Are you sure you want to delete ${filename}?`)) {
+        const fileIndex = files.findIndex(f => f.title === filename);
+        if (fileIndex !== -1) {
+            files.splice(fileIndex, 1);  // Remove from the 'files' array
+            const fileElement = document.querySelector(`[data-title="${filename}"]`);
+            if (fileElement) {
+                fileElement.closest('.col-lg-3.col-md-6.col-sm-6').remove(); // Remove from the DOM
+            }
+        }
+    }
+}
+
+// Function to get the correct icon path based on the file extension
+function getFileIcon(extension) {
+    let iconPath = "../assets/images/layouts/page-1/";  // Base path to your icons
+
+    switch (extension) {
+        case "pdf":
+            return iconPath + "pdf.png";
+        case "doc":
+        case "docx":
+            return iconPath + "doc.png";
+        case "xlsx":
+        case "xls":
+            return iconPath + "xlsx.png";
+        case "ppt":
+        case "pptx":
+            return iconPath + "ppt.png";
+        case "txt":
+            return iconPath + "txt.png";
+        default:
+            return iconPath + "file.png"; // Default icon for unknown extensions
+    }
+}
+
+
+// Function to display the file list dynamically
+function displayFiles(files) {
+    const container = document.getElementById("fileListContainer");
+    container.innerHTML = ""; // Clear any existing content
+
+    files.forEach(file => {
+        const extension = file.title.split(".").pop().toLowerCase(); // Extract file extension
+        const iconPath = getFileIcon(extension); // Get the icon path
+
+        // Create the HTML for each file card
+        const fileElement = document.createElement("div");
+        fileElement.className = "col-lg-3 col-md-6 col-sm-6"; // Bootstrap grid classes
+        fileElement.innerHTML = `
+            <div class="card card-block card-stretch card-height">
+                <div class="card-body image-thumb">
+                    <a href="#" data-title="${file.title}" data-load-file="file" data-load-target="#resolte-contaniner"
+                       data-url="${file.url}" data-toggle="modal" data-target="#exampleModal">
+                        <div class="mb-4 text-center p-3 rounded iq-thumb">
+                            <div class="iq-image-overlay"></div>
+                            <img src="${iconPath}" class="img-fluid" alt="${file.title}">
+                        </div>
+                        <h6>${file.title}</h6>
+                    </a>
+                    <div class="text-center mt-2">
+                        <button class="btn btn-primary btn-sm" onclick="downloadFile('${file.title}')">Download</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFile('${file.title}')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(fileElement); // Add the file card to the container
+    });
+}
+
+// Call displayFiles on page load to initially display the files
+displayFiles(files);
+
+</script>
+</body>
+</html>
